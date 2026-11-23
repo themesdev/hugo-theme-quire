@@ -1,0 +1,15 @@
+{{- /* post/topic.html: a taxonomy term page as a topic card for page-header.html. Its photo is the term's own cover
+  (content/tags/<tag>/_index.md with cover:), else the cover of its newest post whose cover isn't in "used" yet, so a
+  grid of topics doesn't show one photo twice. (dict "term" . "used" (slice …)) */ -}}
+{{- $t := .term }}
+{{- $used := .used | default slice }}
+{{- $photo := partial "post/cover.html" $t }}
+{{- $pg := $t }}
+{{- if not $photo }}
+  {{- range $t.Pages.ByDate.Reverse }}
+    {{- $c := partial "post/cover.html" . }}
+    {{- if and $c (not $photo) (not (in $used .RelPermalink)) }}{{ $photo = $c }}{{ $pg = . }}{{ end }}
+  {{- end }}
+  {{- if not $photo }}{{ range first 1 $t.Pages.ByDate.Reverse }}{{ $photo = partial "post/cover.html" . }}{{ $pg = . }}{{ end }}{{ end }}
+{{- end }}
+{{- return dict "title" $t.LinkTitle "href" $t.RelPermalink "body" $t.Description "count" (T "post_count" (len $t.Pages)) "photo" $photo "page" $pg "key" $pg.RelPermalink }}

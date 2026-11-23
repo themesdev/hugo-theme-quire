@@ -1,0 +1,6 @@
+{{- /* post/cover.html: a page's cover as an ImageRef, or nil. Front matter `cover: {src, alt}`; src is a file in the
+  page bundle or under assets/images/. Also takes `image` (a plain path) for front matter from other themes. */ -}}
+{{- $c := .Params.cover }}
+{{- if and (not $c) .Params.image }}{{ $c = dict "src" .Params.image "alt" "" }}{{ end }}
+{{- if reflect.IsMap $c }}{{ return $c }}{{ else if $c }}{{ return dict "src" $c "alt" "" }}{{ end }}
+{{- return false }}

@@ -1,0 +1,169 @@
+baseURL = "https://quire.themes.dev/"
+title = "Platform Notes"
+theme = "quire"
+locale = "en-GB"
+enableRobotsTXT = true
+# Tags as you write them ("Night trains", not "Night Trains").
+titleCaseStyle = "firstupper"
+
+# The search page reads index.json, which the home page writes as a second output.
+[outputs]
+  home = ["html", "rss", "json"]
+
+[taxonomies]
+  tag = "tags"
+
+# Posts per page on the post list and tag pages.
+[pagination]
+  pagerSize = 9
+
+# "More from the journal" under a post: posts that share tags, then the newest.
+[related]
+  includeNewer = true
+  threshold = 20
+  toLower = true
+  [[related.indices]]
+    name = "tags"
+    weight = 100
+  [[related.indices]]
+    name = "date"
+    weight = 10
+
+[markup]
+  # Chroma writes classes; assets/css/prose.css colours them from the theme's tokens (light and dark).
+  [markup.highlight]
+    noClasses = false
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 3
+  # A Markdown image on its own line becomes a <figure> with its title as the caption.
+  [markup.goldmark.parser]
+    wrapStandAloneImageWithinParagraph = false
+
+[params]
+  description = "Slow travel across Europe by rail, and the small tools that make it easier. Written on trains by Adaeze Morgan."
+  date_format = ":date_long"
+  date_format_short = ":date_medium"
+  show_credit = true
+
+  [params.brand]
+    # One letter or two in the mark beside the name; or logo = "logo.svg" (a file in assets/images/).
+    mark = "P"
+    note = "Written on trains between Leeds and wherever the line ends."
+
+  [params.author]
+    name = "Adaeze Morgan"
+    role = "Writer and software engineer"
+    href = "/about/"
+    photo = "author.webp"
+    bio = "Adaeze has travelled only by train since 2019: about 60,000 km so far, from Narvik to Palermo. She builds timetable software for a living in Leeds and writes Platform Notes on the way to wherever the line ends."
+    note = "New posts most Fridays, and a letter on the first Sunday of the month."
+    links = [
+      { label = "About Adaeze", href = "/about/" },
+      { label = "All posts", href = "/posts/" },
+    ]
+
+  [params.home]
+    title = "Slow travel, one line at a time"
+    lead = "Notes from 60,000 km of European rail: night trains, scenic lines, honest costs and the small scripts I write to make it easier."
+    search_placeholder = "Search 10 posts"
+    topics_label = "Start with a topic"
+    topics = ["night-trains", "scenic-lines", "tools"]
+    latest_kicker = "Latest"
+    latest_title = "New on the line"
+    latest_body = "Route notes, real costs and the occasional bit of code, written on the train itself."
+    more_kicker = "From the archive"
+    more_title = "Older notes, still worth the read"
+    more_body = "Ferries, station cafés, bikes and packing lists from the past few months."
+
+  [params.newsletter]
+    # Where the sign-up forms post to (your Buttondown, Mailchimp or ConvertKit form URL). Empty hides every form.
+    action = "https://example.com/newsletter/subscribe"
+    method = "post"
+    name = "The Platform Notes letter"
+    kicker = "The Platform Notes letter · first Sunday of the month"
+    title = "New routes and cheap sleepers, once a month"
+    body = "One email a month: the posts you missed, timetable changes worth knowing and sleeper fares the week they drop."
+    submit = "Sign me up"
+    legal = "One email a month, nothing else. Your address stays with me and the mailing service. Unsubscribe with one click."
+    privacy = { label = "Privacy", href = "/privacy/" }
+    readers = "3,400 readers"
+    benefits = ["Sleeper fares the week they drop", "Timetable changes a month ahead", "One email a month, never more"]
+    photo = { src = "newsletter.webp", alt = "A wooden café table by a window with two cups of coffee, a notebook and a pencil." }
+    stats = [{ value = "3,400", label = "readers" }, { value = "Monthly", label = "first Sunday" }]
+    [params.newsletter.issue]
+      number = "Issue 31"
+      date = "1 November 2026"
+      title = "Winter sleepers are on sale, and the Bergen line under snow"
+      photo = { src = "newsletter-issue.webp", alt = "A notebook and a cup of coffee on a train table, vineyards and a river outside the window." }
+      contents = ["Six night trains that run through the winter", "A fare that dropped 40% in a week", "Packing for a week of trains in 30 litres"]
+      link = { label = "Read issue 31", href = "/posts/" }
+
+  [params.footer]
+    tagline = "Slow travel across Europe by rail, and the small tools that make it easier."
+    note = "Written on trains between Leeds and wherever the line ends. Corrections welcome: [hello@platformnotes.example](mailto:hello@platformnotes.example)."
+    copyright = "© 2026 Adaeze Morgan"
+
+  [[params.social]]
+    label = "Mastodon"
+    href = "https://mastodon.example/@platformnotes"
+  [[params.social]]
+    label = "GitHub"
+    href = "https://github.com/"
+
+[menus]
+  [[menus.main]]
+    name = "Posts"
+    pageRef = "/posts"
+    weight = 10
+  [[menus.main]]
+    name = "Topics"
+    pageRef = "/tags"
+    weight = 20
+  [[menus.main]]
+    name = "Night trains"
+    pageRef = "/tags/night-trains"
+    weight = 30
+  [[menus.main]]
+    name = "About"
+    pageRef = "/about"
+    weight = 40
+  [[menus.footer]]
+    name = "Posts"
+    pageRef = "/posts"
+    weight = 10
+  [[menus.footer]]
+    name = "Topics"
+    pageRef = "/tags"
+    weight = 20
+  [[menus.footer]]
+    name = "About"
+    pageRef = "/about"
+    weight = 30
+  [[menus.footer]]
+    name = "Search"
+    pageRef = "/search"
+    weight = 40
+  [[menus.legal]]
+    name = "Privacy"
+    pageRef = "/privacy"
+    weight = 10
+
+# Hugo doesn't take these from a theme: every site that uses Quire carries them (see the README).
+[build.buildStats]
+  enable = true
+[[build.cachebusters]]
+  source = "assets/notwatching/hugo_stats\\.json"
+  target = "css"
+
+[module]
+  [[module.mounts]]
+    source = "assets"
+    target = "assets"
+  [[module.mounts]]
+    disableWatch = true
+    source = "hugo_stats.json"
+    target = "assets/notwatching/hugo_stats.json"
+
+[security.exec]
+  allow = ['^(dart-)?sass$', '^go$', '^git$', '^node$', '^postcss$', '^tailwindcss$']

@@ -1,0 +1,54 @@
+{{- /* page-header.html, ported from UI Pro page-header-brouwlab: the page's h1 and lead, centred on a light band, an optional
+  search field (a GET form to the search page) and optional topic cards (photo, title, note, post count). No state.
+  (dict "title" "…" "lead" "…" "search" true "placeholder" "…" "topics_label" "…" "topics" (slice (dict "title" "href"
+   "body" "count" "photo" "page")) "kicker" "…") */ -}}
+{{- $ui := partial "ui/classes.html" . }}
+{{- $topics := .topics | default slice }}
+{{- $id := printf "page-header-%s" (substr (md5 .title) 0 6) }}
+<section aria-labelledby="{{ $id }}" class="bg-muted/40 py-14 lg:py-20">
+  <div class="mx-auto max-w-[1280px] px-6 lg:px-10">
+    <div class="mx-auto max-w-[720px] text-center">
+      {{- with .kicker }}<p class="mb-4 {{ $ui.kicker }}">{{ . }}</p>{{ end }}
+      <h1 id="{{ $id }}" class="text-5xl leading-[1.04] font-semibold tracking-[-0.024em] text-balance lg:text-6xl lg:leading-none lg:tracking-[-0.03em]">{{ .title }}</h1>
+      {{- with .lead }}
+      <p class="mx-auto mt-5 max-w-[48ch] text-lg leading-[1.5] text-muted-foreground">{{ . }}</p>
+      {{- end }}
+      {{- if .search }}{{ with site.GetPage "/search" }}
+      <form role="search" action="{{ .RelPermalink }}" method="get" class="relative mx-auto mt-8 max-w-[560px]">
+        <label for="{{ $id }}-q" class="sr-only">{{ T "search_label" }}</label>
+        <input id="{{ $id }}-q" name="q" type="search" placeholder="{{ $.placeholder | default (T "search_placeholder") }}" class="{{ $ui.field }} pr-10">
+        <button type="submit" aria-label="{{ T "search" }}" class="{{ $ui.btn }} absolute top-1 right-1 size-7 rounded-md">
+          {{- partial "icon.html" (dict "name" "search" "class" "size-4") -}}
+        </button>
+      </form>
+      {{- end }}{{ end }}
+    </div>
+
+    {{- if $topics }}
+    {{- with .topics_label }}<h2 class="mt-12 text-3xl leading-[1.08] font-semibold tracking-[-0.018em]">{{ . }}</h2>{{ end }}
+    <ul class="mt-6 grid gap-5 lg:gap-6 {{ if eq (len $topics) 4 }}md:grid-cols-2 lg:grid-cols-4{{ else }}md:grid-cols-3{{ end }}">
+      {{- range $topics }}
+      {{- $t := . }}
+      <li>
+        <a href="{{ .href }}" class="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition-shadow hover:shadow-lg hover:shadow-foreground/5 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none">
+          {{- with .photo }}
+          {{- partial "img.html" (dict "img" . "page" $t.page "ratio" "2:1" "sizes" "(min-width: 1280px) 400px, (min-width: 768px) 33vw, 92vw" "class" "aspect-[2/1] w-full object-cover transition-transform duration-500 group-hover:scale-[1.02] motion-reduce:transition-none") }}
+          {{- end }}
+          <span class="flex flex-1 flex-col p-6">
+            <span class="flex items-baseline justify-between gap-3">
+              <span class="text-xl leading-[1.25] font-semibold">{{ .title }}</span>
+              {{- with .count }}<span class="text-xs whitespace-nowrap text-muted-foreground tabular-nums">{{ . }}</span>{{ end }}
+            </span>
+            {{- with .body }}<span class="mt-2 text-base leading-[1.5] text-muted-foreground">{{ . }}</span>{{ end }}
+            <span class="mt-4 inline-flex items-center gap-2 text-sm font-semibold">
+              {{ T "explore" }}
+              {{- partial "icon.html" (dict "name" "arrow-right" "class" "size-4 transition-transform group-hover:translate-x-0.5") }}
+            </span>
+          </span>
+        </a>
+      </li>
+      {{- end }}
+    </ul>
+    {{- end }}
+  </div>
+</section>

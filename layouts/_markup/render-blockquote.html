@@ -1,0 +1,12 @@
+{{- /* Blockquotes: a plain quote is article-rafter's pull quote; a GitHub-style alert ("> [!NOTE]", TIP, IMPORTANT,
+  WARNING, CAUTION) is a muted box with its kind as a small label. */ -}}
+{{- if eq .Type "alert" -}}
+<blockquote data-alert="{{ .AlertType }}">
+  <p class="alert-title">{{ with .AlertTitle }}{{ . }}{{ else }}{{ T (printf "alert_%s" .AlertType) | default (.AlertType | title) }}{{ end }}</p>
+  {{ .Text }}
+</blockquote>
+{{- else -}}
+<blockquote>
+  {{ .Text }}
+</blockquote>
+{{- end -}}

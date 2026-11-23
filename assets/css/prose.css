@@ -1,0 +1,161 @@
+/* Long-form text: the rendered Markdown of posts and pages (<div class="prose">), in the visual language of UI Pro's
+   article-rafter block: 18px body at 1.6, semibold headings on the R50 leading/tracking table, a drop cap on the first
+   paragraph of a post, rafter's tables and pull quotes. Everything takes its colours from the tokens in main.css, so
+   it follows dark mode and any palette you set there. */
+@layer components {
+  .prose {
+    @apply max-w-none text-lg leading-[1.6] text-foreground/90;
+    overflow-wrap: break-word;
+  }
+  .prose > :first-child {
+    @apply mt-0;
+  }
+  .prose :where(p) {
+    @apply mt-5;
+  }
+  /* The drop cap of article-rafter: on posts only (single.html adds .prose-dropcap). */
+  .prose-dropcap > p:first-child::first-letter {
+    @apply float-left mt-[0.08em] mr-3 text-7xl leading-[0.8] font-semibold tracking-[-0.03em] text-foreground;
+  }
+  .prose :where(h2) {
+    @apply mt-10 scroll-mt-24 text-2xl leading-[1.15] font-semibold tracking-[-0.01em] text-foreground;
+  }
+  .prose :where(h3) {
+    @apply mt-8 scroll-mt-24 text-xl leading-[1.25] font-semibold text-foreground;
+  }
+  .prose :where(h4, h5, h6) {
+    @apply mt-6 scroll-mt-24 text-lg leading-[1.25] font-semibold text-foreground;
+  }
+  /* The # after a heading (render-heading.html): shown on hover and on keyboard focus. */
+  .prose .heading-anchor {
+    @apply ml-2 inline-flex size-6 translate-y-[-0.1em] items-center justify-center rounded-sm align-middle text-muted-foreground no-underline opacity-0 outline-none hover:text-foreground focus-visible:opacity-100 focus-visible:ring-3 focus-visible:ring-ring/50;
+  }
+  .prose :is(h2, h3, h4):hover .heading-anchor {
+    @apply opacity-100;
+  }
+  .prose :where(a:not(.heading-anchor)) {
+    @apply rounded-sm font-medium text-foreground underline decoration-foreground/30 underline-offset-4 outline-none hover:decoration-foreground focus-visible:ring-3 focus-visible:ring-ring/50;
+  }
+  .prose :where(strong) {
+    @apply font-semibold text-foreground;
+  }
+  .prose :where(ul, ol) {
+    @apply mt-5 pl-6;
+  }
+  .prose :where(ul) {
+    @apply list-disc;
+  }
+  .prose :where(ol) {
+    @apply list-decimal;
+  }
+  .prose :where(li) {
+    @apply mt-2 pl-1;
+  }
+  .prose :where(li)::marker {
+    @apply text-muted-foreground;
+  }
+  .prose :where(li > ul, li > ol) {
+    @apply mt-2;
+  }
+  .prose :where(hr) {
+    @apply my-10 border-border;
+  }
+  /* Figures (render-image.html) and rafter's figure caption. */
+  .prose :where(figure) {
+    @apply mt-8;
+  }
+  .prose :where(figure img, p > img) {
+    @apply w-full rounded-2xl bg-muted;
+  }
+  .prose :where(figcaption) {
+    @apply mt-3 text-sm leading-[1.4] text-muted-foreground;
+  }
+  /* Rafter's pull quote: a plain Markdown quote. */
+  .prose :where(blockquote:not([data-alert])) {
+    @apply mt-8 border-y border-border py-6 text-center text-2xl leading-[1.15] font-semibold tracking-[-0.01em] text-balance text-foreground;
+  }
+  .prose :where(blockquote:not([data-alert])) > * {
+    @apply mx-auto mt-0 max-w-[38ch];
+  }
+  /* Alerts ("> [!NOTE]"), in rafter's muted box. */
+  .prose :where(blockquote[data-alert]) {
+    @apply mt-8 rounded-2xl bg-muted/50 p-6 text-base leading-[1.5];
+  }
+  .prose :where(blockquote[data-alert]) > :first-child {
+    @apply mt-0;
+  }
+  .prose .alert-title {
+    @apply mb-2 flex items-center gap-2 text-xs font-medium tracking-[0.08em] text-muted-foreground uppercase;
+  }
+  /* Rafter's table (render-table.html wraps it in a scrolling, focusable region). */
+  .prose .table-wrap {
+    @apply mt-6 overflow-x-auto rounded-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50;
+  }
+  .prose :where(table) {
+    @apply w-full min-w-[480px] text-left text-sm leading-[1.4];
+  }
+  .prose :where(thead tr) {
+    @apply border-y border-foreground;
+  }
+  .prose :where(th) {
+    @apply py-2.5 text-xs font-medium tracking-[0.08em] whitespace-nowrap uppercase;
+  }
+  .prose :where(tbody tr) {
+    @apply border-b border-border;
+  }
+  .prose :where(td) {
+    @apply py-2 text-foreground tabular-nums;
+  }
+  .prose :where(th, td):not(:first-child) {
+    @apply pl-6;
+  }
+  .prose :where(th, td)[style*="right"],
+  .prose :where(th, td)[align="right"] {
+    @apply text-right;
+  }
+  /* Code. Inline code; blocks are Chroma's div.highlight > pre (colours below). */
+  .prose :where(:not(pre) > code) {
+    @apply rounded-sm border border-border bg-muted/50 px-1.5 py-0.5 font-mono text-base;
+    overflow-wrap: anywhere;
+  }
+  .prose :where(.highlight) {
+    @apply relative mt-6;
+  }
+  .prose :where(pre) {
+    @apply overflow-x-auto rounded-xl border border-border bg-card p-4 pr-20 font-mono text-sm leading-[1.6] text-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/50;
+  }
+  .prose :where(pre code) {
+    @apply font-mono;
+  }
+  /* The copy button ui.js adds to every code block. */
+  .prose .code-copy {
+    @apply absolute top-2 right-2 inline-flex h-7 items-center rounded-md border border-border bg-background px-2.5 font-sans text-xs font-medium text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50;
+  }
+  /* Footnotes (Goldmark). */
+  .prose :where(.footnotes) {
+    @apply mt-10 border-t border-border pt-5 text-sm leading-[1.45] text-muted-foreground;
+  }
+  .prose :where(.footnotes hr) {
+    @apply hidden;
+  }
+  .prose :where(sup) {
+    @apply ml-0.5 text-xs;
+  }
+}
+
+/* Chroma (Hugo's highlighter, markup.highlight.noClasses = false): token colours from the theme's tokens only, each one
+   checked against --card in light and dark. */
+@layer components {
+  .chroma { @apply text-foreground; }
+  .chroma :is(.c, .ch, .cm, .c1, .cs, .cp, .cpf) { @apply text-muted-foreground italic; }
+  .chroma :is(.k, .kc, .kd, .kn, .kp, .kr, .kt, .nt, .ow) { @apply text-info; }
+  .chroma :is(.s, .sa, .sb, .sc, .dl, .sd, .s2, .se, .sh, .si, .sx, .sr, .s1, .ss) { @apply text-success; }
+  .chroma :is(.m, .mb, .mf, .mh, .mi, .il, .mo, .na, .nv, .vc, .vg, .vi) { @apply text-warning; }
+  .chroma :is(.nf, .fm, .nb, .bp, .nc, .nd, .ne) { @apply font-medium text-foreground; }
+  .chroma :is(.o, .p) { @apply text-muted-foreground; }
+  .chroma :is(.err) { @apply text-destructive; }
+  .chroma :is(.gd) { @apply text-destructive; }
+  .chroma :is(.gi) { @apply text-success; }
+  .chroma .hl { @apply block bg-muted; }
+  .chroma .ln, .chroma .lnt { @apply mr-4 text-muted-foreground; }
+}

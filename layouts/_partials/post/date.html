@@ -1,0 +1,4 @@
+{{- /* post/date.html: <time> for a page's date. (dict "page" . "short" true) */ -}}
+{{- $f := cond (.short | default false) (site.Params.date_format_short | default ":date_medium") (site.Params.date_format | default ":date_long") -}}
+<time datetime="{{ .page.Date.Format "2006-01-02" }}">{{ .page.Date | time.Format $f }}</time>
+{{- /**/ -}}

@@ -1,0 +1,20 @@
+{{- /* CSS. By default the theme uses its prebuilt stylesheet (assets/css/compiled.css), so a site needs nothing but Hugo.
+  Set `params.tailwind = true` (and npm install tailwindcss @tailwindcss/cli) to compile assets/css/main.css with Tailwind v4
+  instead, which you need once you add classes of your own. templates.Defer runs Tailwind after every page is rendered,
+  so hugo_stats.json already holds every class the pages use. */ -}}
+{{- with (templates.Defer (dict "key" "global")) }}
+  {{- $css := "" }}
+  {{- if site.Params.tailwind }}
+    {{- with resources.Get "css/main.css" }}
+      {{- $css = . | css.TailwindCSS (dict "minify" hugo.IsProduction "skipInlineImportsNotFound" true) }}
+    {{- end }}
+  {{- else }}
+    {{- $css = resources.Get "css/compiled.css" }}
+    {{- if hugo.IsProduction }}{{ $css = $css | minify }}{{ end }}
+  {{- end }}
+  {{- with $css }}
+    {{- if hugo.IsProduction }}
+      {{- with . | fingerprint }}<link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">{{ end }}
+    {{- else }}<link rel="stylesheet" href="{{ .RelPermalink }}">{{ end }}
+  {{- end }}
+{{- end }}

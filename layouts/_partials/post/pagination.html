@@ -1,0 +1,25 @@
+{{- /* post/pagination.html: newer/older and page numbers for a paginated list, in the outline-button style of the stories
+  block. (a Pager) */ -}}
+{{- $ui := partial "ui/classes.html" . }}
+{{- if gt .TotalPages 1 }}
+<nav aria-label="{{ T "pagination" }}" class="mx-auto -mt-6 mb-16 flex max-w-[1280px] flex-wrap items-center justify-center gap-2 px-6 lg:mb-24 lg:px-10">
+  {{- with .Prev }}
+  <a href="{{ .URL }}" rel="prev" class="{{ $ui.btnOutline }} h-9 rounded-lg px-4 text-sm">{{ partial "icon.html" (dict "name" "arrow-left" "class" "size-4") }}{{ T "newer_posts" }}</a>
+  {{- end }}
+  <ul class="flex items-center gap-1">
+    {{- $cur := .PageNumber }}
+    {{- range .Pagers }}
+    <li>
+      {{- if eq .PageNumber $cur }}
+      <span aria-current="page" class="inline-flex size-9 items-center justify-center rounded-lg bg-foreground text-sm font-semibold text-background">{{ .PageNumber }}</span>
+      {{- else }}
+      <a href="{{ .URL }}" class="inline-flex size-9 items-center justify-center rounded-lg text-sm font-medium hover:bg-muted outline-none focus-visible:ring-3 focus-visible:ring-ring/50" aria-label="{{ T "page_n" .PageNumber }}">{{ .PageNumber }}</a>
+      {{- end }}
+    </li>
+    {{- end }}
+  </ul>
+  {{- with .Next }}
+  <a href="{{ .URL }}" rel="next" class="{{ $ui.btnOutline }} h-9 rounded-lg px-4 text-sm">{{ T "older_posts" }}{{ partial "icon.html" (dict "name" "arrow-right" "class" "size-4") }}</a>
+  {{- end }}
+</nav>
+{{- end }}

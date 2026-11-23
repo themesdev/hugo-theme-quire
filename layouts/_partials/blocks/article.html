@@ -1,0 +1,56 @@
+{{- /* article.html, ported from UI Pro article-rafter: a centred header (kicker, h1, standfirst, author, date, reading
+  time), a wide cover, then the text in a card that overlaps the cover on large screens, with "In this post" (the h2s)
+  on top and the post's tags below. Pages that are not posts get the same layout without the byline.
+  The React original's numbered contents list is unnumbered here. (dict "page" . "post" true) */ -}}
+{{- $p := .page }}
+{{- $ui := partial "ui/classes.html" . }}
+{{- $a := partial "post/author.html" $p }}
+{{- $cover := partial "post/cover.html" $p }}
+<article aria-labelledby="article-title" class="bg-background py-16 lg:py-24">
+  <div class="mx-auto max-w-[1280px] px-6 lg:px-10">
+    <header class="mx-auto max-w-[880px] text-center">
+      {{- with partial "post/kicker.html" $p }}<p class="{{ $ui.kicker }}">{{ . }}</p>{{ end }}
+      <h1 id="article-title" class="mx-auto mt-5 max-w-[20ch] text-4xl leading-[1.08] font-semibold tracking-[-0.018em] text-balance lg:text-6xl lg:leading-none lg:tracking-[-0.03em]">{{ $p.Title }}</h1>
+      {{- with $p.Description }}
+      <p class="mx-auto mt-5 max-w-[60ch] text-lg leading-[1.5] text-muted-foreground">{{ . }}</p>
+      {{- end }}
+      {{- if .post }}
+      <div class="mt-7 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-sm text-muted-foreground">
+        {{- with $a.photo }}{{ partial "img.html" (dict "img" (dict "src" . "alt" "") "ratio" "1:1" "sizes" "36px" "class" "size-9 rounded-full object-cover ring-1 ring-border") }}{{ end }}
+        {{- with $a.name }}
+        <span>{{ T "by" }} {{ with $a.href }}<a href="{{ . | relLangURL }}" class="font-medium text-foreground underline-offset-4 hover:underline {{ $ui.focus }}">{{ $a.name }}</a>{{ else }}<span class="font-medium text-foreground">{{ $a.name }}</span>{{ end }}{{ with $a.role }}, {{ . }}{{ end }}</span>
+        <span aria-hidden="true" class="size-1 rounded-full bg-muted-foreground/60"></span>
+        {{- end }}
+        {{ partial "post/date.html" (dict "page" $p) }}
+        <span aria-hidden="true" class="size-1 rounded-full bg-muted-foreground/60"></span>
+        <span>{{ T "reading_time" $p.ReadingTime }}</span>
+        {{- if and (gt $p.Lastmod $p.Date) (ne ($p.Lastmod.Format "2006-01-02") ($p.Date.Format "2006-01-02")) }}
+        <span aria-hidden="true" class="size-1 rounded-full bg-muted-foreground/60"></span>
+        <span>{{ T "updated" }} {{ $p.Lastmod | time.Format (site.Params.date_format_short | default ":date_medium") }}</span>
+        {{- end }}
+      </div>
+      {{- end }}
+    </header>
+
+    {{- with $cover }}
+    {{- if $.post }}
+    {{- partial "img.html" (dict "img" . "page" $p "ratio" "16:9" "eager" true "sizes" "(min-width: 1280px) 1200px, 100vw" "class" "mt-10 aspect-[16/9] w-full rounded-3xl object-cover object-[50%_60%] lg:mt-12 lg:aspect-[10/3] lg:rounded-4xl") }}
+    {{- else }}
+    {{- partial "img.html" (dict "img" . "page" $p "eager" true "sizes" "(min-width: 768px) 320px, 60vw" "class" "mx-auto mt-10 aspect-square w-60 rounded-full object-cover ring-1 ring-border lg:w-72") }}
+    {{- end }}
+    {{- end }}
+
+    <div class="relative mx-auto max-w-[800px] rounded-3xl bg-background px-0 pt-8 sm:px-8 lg:px-14 lg:pt-10 lg:pb-10 lg:ring-1 lg:ring-border {{ if and $cover .post }}-mt-6 lg:-mt-20{{ else }}mt-10{{ end }}">
+      {{- if or .post $p.Params.toc }}{{ partial "post/toc.html" $p }}{{ end }}
+      <div class="prose{{ if .post }} prose-dropcap{{ end }} mt-7" data-ui="code-copy" data-copy-label="{{ T "copy" }}" data-copied-label="{{ T "copied" }}">
+        {{ $p.Content }}
+      </div>
+      {{- if .post }}{{ with $p.GetTerms "tags" }}
+      <div class="mt-10 flex flex-wrap items-center gap-3 border-t border-border pt-6">
+        <h2 class="text-xs font-medium tracking-[0.08em] text-muted-foreground uppercase">{{ T "tags" }}</h2>
+        {{- partial "post/tags.html" (dict "page" $p) }}
+      </div>
+      {{- end }}{{ end }}
+    </div>
+  </div>
+</article>

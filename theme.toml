@@ -1,0 +1,13 @@
+name = "Quire"
+license = "MIT"
+licenselink = "https://github.com/themesdev/hugo-theme-quire/blob/main/LICENSE"
+description = "A clean, fast blog theme built with Tailwind CSS v4 and shadcn/ui's design tokens. Works with Hugo alone (prebuilt CSS, no Node), with an opt-in Tailwind build for your own classes. Featured post, masonry archive, topic pages with photos, article layout with table of contents, author box, related posts, search, dark mode."
+homepage = "https://github.com/themesdev/hugo-theme-quire"
+demosite = "https://quire.themes.dev/"
+tags = ["blog", "tailwind", "tailwindcss", "minimal", "clean", "responsive", "dark mode", "light", "personal", "search", "white"]
+features = ["blog", "dark mode", "search", "table of contents", "related posts", "syntax highlighting", "code copy button", "responsive images", "rss", "sitemap", "open graph", "newsletter form", "tailwind css v4", "no node required"]
+min_version = "0.156.0"
+
+[author]
+  name = "themes.dev"
+  homepage = "https://www.themes.dev/?utm_source=hugo-themes&utm_medium=referral&utm_campaign=quire"

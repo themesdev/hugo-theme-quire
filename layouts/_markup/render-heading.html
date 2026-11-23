@@ -1,0 +1,5 @@
+{{- /* Headings with an id and a # link to themselves (shown on hover and keyboard focus). */ -}}
+<h{{ .Level }} id="{{ .Anchor }}"{{ with .Attributes.class }} class="{{ . }}"{{ end }}>
+  {{- .Text -}}
+  {{- if ge .Level 2 }}<a class="heading-anchor" href="#{{ .Anchor }}" aria-label="{{ T "anchor_label" (dict "Title" (.PlainText)) }}">#</a>{{ end -}}
+</h{{ .Level }}>

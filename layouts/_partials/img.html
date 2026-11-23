@@ -1,0 +1,42 @@
+{{- /* img.html: an ImageRef ({src, alt, width, height}). A src found in the page bundle (pass "page") or under assets/images/
+  is resized to webp at 480/800/1200/1600/2400 with a srcset; a "ratio" ("16:9", "4:5") crops it to that shape first
+  (Hugo's smart crop). width and height come from the image when the ImageRef leaves them out. Anything else (a remote
+  URL, a file in static/) is used as given.
+  (dict "img" $cover "page" $page "class" "…" "sizes" "100vw" "ratio" "16:9" "eager" true) */ -}}
+{{- $i := .img }}
+{{- $src := strings.TrimPrefix "/" $i.src }}
+{{- $r := "" }}
+{{- with .page }}{{ $r = .Resources.Get $src }}{{ end }}
+{{- if not $r }}{{ $r = resources.Get (printf "images/%s" (strings.TrimPrefix "images/" $src)) }}{{ end }}
+{{- $alt := $i.alt | default "" }}
+{{- if and $r (eq $r.ResourceType "image") (ne $r.MediaType.SubType "svg") }}
+  {{- $w := $r.Width }}{{ $h := $r.Height }}
+  {{- with .ratio }}
+    {{- $p := split . ":" }}
+    {{- $rw := float (index $p 0) }}{{ $rh := float (index $p 1) }}
+    {{- if gt (div (float $r.Width) (float $r.Height)) (div $rw $rh) }}{{ $w = int (math.Round (mul (float $r.Height) (div $rw $rh))) }}{{ else }}{{ $h = int (math.Round (div (float $r.Width) (div $rw $rh))) }}{{ end }}
+  {{- end }}
+  {{- $set := slice }}
+  {{- $main := "" }}
+  {{- $target := cond (gt $w 1600) 1600 $w }}
+  {{- range slice 480 800 1200 1600 2400 }}
+    {{- if le . $w }}
+      {{- $v := "" }}
+      {{- if $.ratio }}{{ $v = $r.Fill (printf "%dx%d webp q80 Smart" . (int (math.Round (div (mul (float .) (float $h)) (float $w))))) }}{{ else }}{{ $v = $r.Resize (printf "%dx webp q80" .) }}{{ end }}
+      {{- $set = $set | append (printf "%s %dw" $v.RelPermalink .) }}
+      {{- if le . $target }}{{ $main = $v }}{{ end }}
+    {{- end }}
+  {{- end }}
+  {{- /* The image's own width too, when it falls between two steps (a 1120px photo gets 480, 800 and 1120). */}}
+  {{- if not (in (slice 480 800 1200 1600 2400) $w) }}
+    {{- $full := "" }}
+    {{- if .ratio }}{{ $full = $r.Fill (printf "%dx%d webp q80 Smart" $w $h) }}{{ else }}{{ $full = $r.Resize (printf "%dx webp q80" $w) }}{{ end }}
+    {{- $set = $set | append (printf "%s %dw" $full.RelPermalink $w) }}
+    {{- if or (not $main) (le $w $target) }}{{ $main = $full }}{{ end }}
+  {{- end -}}
+<img src="{{ $main.RelPermalink }}" srcset="{{ delimit $set ", " }}" sizes="{{ .sizes | default "100vw" }}" alt="{{ $alt }}" width="{{ $w }}" height="{{ $h }}"{{ if .eager }} fetchpriority="high"{{ else }} loading="lazy" decoding="async"{{ end }} class="{{ .class }}">
+{{- else if $r -}}
+<img src="{{ $r.RelPermalink }}" alt="{{ $alt }}" width="{{ $i.width | default 1200 }}" height="{{ $i.height | default 675 }}"{{ if not .eager }} loading="lazy"{{ end }} class="{{ .class }}">
+{{- else -}}
+<img src="{{ $i.src }}" alt="{{ $alt }}" width="{{ $i.width | default 1200 }}" height="{{ $i.height | default 675 }}"{{ if .eager }} fetchpriority="high"{{ else }} loading="lazy" decoding="async"{{ end }} class="{{ .class }}">
+{{- end }}

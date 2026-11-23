@@ -1,0 +1,32 @@
+{{- define "main" }}
+{{- $h := site.Params.home | default dict }}
+{{- $posts := partial "post/list.html" . }}
+{{- $lead := index (where $posts "Params.featured" true) 0 | default (index $posts 0) }}
+{{- $rest := slice }}{{ range $posts }}{{ if ne . $lead }}{{ $rest = $rest | append . }}{{ end }}{{ end }}
+{{- $topics := slice }}
+{{- range $h.topics }}{{ with site.GetPage (printf "/tags/%s" .) }}{{ $topics = $topics | append (partial "post/topic.html" (dict "term" .)) }}{{ end }}{{ end }}
+{{- $postsPage := site.GetPage (printf "/%s" (index (site.Params.mainSections | default (slice "posts")) 0)) }}
+{{- partial "blocks/page-header.html" (dict
+  "title" ($h.title | default site.Title)
+  "lead" ($h.lead | default site.Params.description)
+  "search" true
+  "placeholder" $h.search_placeholder
+  "topics_label" $h.topics_label
+  "topics" $topics) }}
+{{- partial "blocks/latest.html" (dict
+  "lead" $lead
+  "pages" (first 3 $rest)
+  "kicker" ($h.latest_kicker | default (T "latest"))
+  "title" ($h.latest_title | default (T "latest_title"))
+  "body" $h.latest_body
+  "all" (cond (ne $postsPage nil) (dict "label" (T "all_posts" (len $posts)) "href" $postsPage.RelPermalink) false)
+  "more_label" (T "more_recent")
+  "tags" true) }}
+{{- partial "blocks/stories.html" (dict
+  "pages" (first 6 (after 3 $rest))
+  "kicker" ($h.more_kicker | default (T "archive"))
+  "title" ($h.more_title | default (T "archive_title"))
+  "body" $h.more_body
+  "all" (cond (ne $postsPage nil) (dict "label" (T "browse_archive") "href" $postsPage.RelPermalink) false)) }}
+{{- partial "blocks/newsletter.html" . }}
+{{- end }}

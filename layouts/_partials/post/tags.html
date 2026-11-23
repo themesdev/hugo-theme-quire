@@ -1,0 +1,9 @@
+{{- /* post/tags.html: a page's tags as small badge links. (dict "page" . "class" "mt-4") */ -}}
+{{- $ui := partial "ui/classes.html" . }}
+{{- with .page.GetTerms "tags" }}
+<ul class="flex flex-wrap gap-1.5 {{ $.class }}" aria-label="{{ T "tags" }}">
+  {{- range . }}
+  <li><a href="{{ .RelPermalink }}" class="relative z-10 {{ $ui.badge }}">{{ .LinkTitle }}</a></li>
+  {{- end }}
+</ul>
+{{- end }}

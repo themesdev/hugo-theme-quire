@@ -1,0 +1,18 @@
+{{- define "main" }}
+{{- $ui := partial "ui/classes.html" . }}
+{{- partial "blocks/page-header.html" (dict
+  "title" (T "not_found_title")
+  "lead" (T "not_found_lead")
+  "kicker" "404"
+  "search" true) }}
+{{- $posts := first 3 (partial "post/list.html" .) }}
+{{- with $posts }}
+<section aria-labelledby="nf-latest" class="mx-auto max-w-[1200px] px-6 py-16 lg:px-10 lg:py-24">
+  <h2 id="nf-latest" class="text-lg leading-[1.25] font-semibold">{{ T "latest_posts" }}</h2>
+  <ul class="mt-5 grid gap-6 md:grid-cols-3">
+    {{- range . }}<li>{{ partial "cards/small.html" . }}</li>{{ end }}
+  </ul>
+  <p class="mt-10"><a href="{{ site.Home.RelPermalink }}" class="{{ $ui.btnOutline }} h-9 rounded-lg px-4 text-sm">{{ partial "icon.html" (dict "name" "arrow-left" "class" "size-4") }}{{ T "back_home" }}</a></p>
+</section>
+{{- end }}
+{{- end }}

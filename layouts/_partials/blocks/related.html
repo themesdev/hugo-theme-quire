@@ -1,0 +1,44 @@
+{{- /* related.html, ported from UI Pro posts-scholia (its featured row): "More from the journal" as one large post and up to
+  two smaller ones beside it, from Hugo's .Related (tags, then date). Cards are stretched links. (dict "page" . "pages" $list) */ -}}
+{{- $ui := partial "ui/classes.html" . }}
+{{- $pages := .pages }}
+{{- if $pages }}
+{{- $lead := index $pages 0 }}
+{{- $side := after 1 $pages }}
+<section aria-labelledby="related-title" class="bg-background py-20 text-foreground lg:py-28">
+  <div class="mx-auto max-w-[1120px] px-6 lg:px-10">
+    <header class="max-w-[640px]">
+      <h2 id="related-title" class="text-4xl leading-[1.08] font-semibold tracking-[-0.018em] text-balance lg:text-5xl lg:leading-[1.04] lg:tracking-[-0.024em]">{{ T "related_title" }}</h2>
+      {{- with site.Params.related_intro }}<p class="mt-4 text-lg leading-[1.5] text-muted-foreground">{{ . }}</p>{{ end }}
+    </header>
+    <div class="mt-12 grid gap-10 lg:mt-14 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:gap-8">
+      <article class="group relative">
+        <div class="overflow-hidden rounded-xl bg-muted">
+          {{- with partial "post/cover.html" $lead }}{{ partial "img.html" (dict "img" . "page" $lead "ratio" "16:9" "sizes" "(min-width: 1120px) 690px, 100vw" "class" "aspect-[16/9] w-full object-cover transition-transform duration-500 group-hover:scale-[1.02] motion-reduce:transition-none") }}{{ end }}
+        </div>
+        <h3 class="mt-6 max-w-[26ch] text-3xl leading-[1.08] font-bold tracking-[-0.018em] text-balance">
+          <a href="{{ $lead.RelPermalink }}" class="rounded-sm outline-none after:absolute after:inset-0 group-hover:underline group-hover:underline-offset-4 focus-visible:ring-3 focus-visible:ring-ring/50">{{ $lead.Title }}</a>
+        </h3>
+        {{- with $lead.Description | default $lead.Summary }}<p class="mt-3 line-clamp-2 max-w-[60ch] text-lg leading-[1.5] text-muted-foreground">{{ . | plainify }}</p>{{ end }}
+        <p class="mt-4 text-xs text-muted-foreground tabular-nums">{{ partial "post/date.html" (dict "page" $lead "short" true) }} · {{ T "reading_time" $lead.ReadingTime }}</p>
+      </article>
+      {{- with $side }}
+      <div class="grid content-start gap-8 sm:grid-cols-2 lg:grid-cols-1">
+        {{- range . }}
+        {{- $p := . }}
+        <article class="group relative">
+          <div class="overflow-hidden rounded-xl bg-muted">
+            {{- with partial "post/cover.html" . }}{{ partial "img.html" (dict "img" . "page" $p "ratio" "16:9" "sizes" "(min-width: 1120px) 330px, (min-width: 640px) 50vw, 100vw" "class" "aspect-[16/9] w-full object-cover transition-transform duration-500 group-hover:scale-[1.02] motion-reduce:transition-none") }}{{ end }}
+          </div>
+          <h3 class="mt-4 text-lg leading-[1.25] font-semibold text-balance">
+            <a href="{{ .RelPermalink }}" class="rounded-sm outline-none after:absolute after:inset-0 group-hover:underline group-hover:underline-offset-4 focus-visible:ring-3 focus-visible:ring-ring/50">{{ .Title }}</a>
+          </h3>
+          <p class="mt-2 text-xs text-muted-foreground tabular-nums">{{ partial "post/date.html" (dict "page" . "short" true) }} · {{ T "reading_time" .ReadingTime }}</p>
+        </article>
+        {{- end }}
+      </div>
+      {{- end }}
+    </div>
+  </div>
+</section>
+{{- end }}

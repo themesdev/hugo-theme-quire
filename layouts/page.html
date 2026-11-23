@@ -1,0 +1,13 @@
+{{- define "main" }}
+{{- $isPost := in (site.Params.mainSections | default (slice "posts")) .Section }}
+{{- partial "blocks/article.html" (dict "page" . "post" $isPost) }}
+{{- if $isPost }}
+  {{- partial "post/prev-next.html" . }}
+  {{- partial "blocks/author.html" (partial "post/author.html" .) }}
+  {{- /* Related posts (site config [related]), topped up with the newest posts so the row is always full. */}}
+  {{- $rel := first 3 (site.RegularPages.Related .) }}
+  {{- range partial "post/list.html" . }}{{ if and (lt (len $rel) 3) (ne . $) (not (in $rel .)) }}{{ $rel = $rel | append . }}{{ end }}{{ end }}
+  {{- partial "blocks/related.html" (dict "page" . "pages" $rel) }}
+  {{- partial "blocks/newsletter-photo.html" . }}
+{{- end }}
+{{- end }}

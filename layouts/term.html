@@ -1,0 +1,10 @@
+{{- define "main" }}
+{{- $pager := .Paginate .Pages.ByDate.Reverse }}
+{{- partial "blocks/page-header.html" (dict
+  "title" .Title
+  "lead" (.Description | default (.Content | plainify))
+  "kicker" (T "post_count" (len .Pages))
+  "search" false) }}
+{{- partial "blocks/stories.html" (dict "pages" $pager.Pages "title" .Title "title_hidden" true) }}
+{{- partial "post/pagination.html" $pager }}
+{{- end }}

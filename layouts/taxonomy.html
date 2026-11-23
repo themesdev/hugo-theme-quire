@@ -1,0 +1,13 @@
+{{- define "main" }}
+{{- $topics := slice }}
+{{- $used := slice }}
+{{- range .Pages.ByTitle }}
+  {{- $t := partial "post/topic.html" (dict "term" . "used" $used) }}
+  {{- $topics = $topics | append $t }}{{ $used = $used | append $t.key }}
+{{- end }}
+{{- partial "blocks/page-header.html" (dict
+  "title" .Title
+  "lead" (.Description | default (.Content | plainify))
+  "search" false
+  "topics" $topics) }}
+{{- end }}

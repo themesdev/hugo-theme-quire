@@ -1,0 +1,60 @@
+{{- /* footer.html, ported from UI Pro footer-kantlijn (its lower half; the class-booking call to action is left out): the
+  site's name, tagline and social links, a note, the footer menu, then copyright, the legal menu and the theme credit.
+  No state. */ -}}
+{{- $ui := partial "ui/classes.html" . }}
+{{- $f := site.Params.footer | default dict }}
+<footer class="mt-8 border-t border-border bg-background text-foreground">
+  <div class="mx-auto max-w-[1280px] px-6 pt-12 lg:px-10 lg:pt-14">
+    <div class="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
+      <div>
+        <p class="text-2xl leading-[1.15] font-semibold tracking-[-0.01em]">{{ site.Title }}</p>
+        {{- with $f.tagline | default site.Params.description }}
+        <p class="mt-1.5 max-w-[44ch] text-base leading-[1.45] text-muted-foreground">{{ . }}</p>
+        {{- end }}
+        {{- $rss := "" }}{{ with site.Home.OutputFormats.Get "rss" }}{{ $rss = .RelPermalink }}{{ end }}
+        {{- if or site.Params.social $rss }}
+        <ul class="mt-5 flex flex-wrap gap-2">
+          {{- range site.Params.social }}
+          <li><a href="{{ .href }}" class="inline-flex h-8 items-center rounded-full border border-border px-3.5 text-sm hover:bg-muted outline-none focus-visible:ring-3 focus-visible:ring-ring/50"{{ if strings.HasPrefix .href "http" }} rel="me noopener"{{ end }}>{{ .label }}</a></li>
+          {{- end }}
+          {{- with $rss }}
+          <li><a href="{{ . }}" class="inline-flex h-8 items-center gap-1.5 rounded-full border border-border px-3.5 text-sm hover:bg-muted outline-none focus-visible:ring-3 focus-visible:ring-ring/50">{{ partial "icon.html" (dict "name" "rss" "class" "size-3.5") }}{{ T "rss" }}</a></li>
+          {{- end }}
+        </ul>
+        {{- end }}
+      </div>
+      <div class="grid gap-8 sm:grid-cols-[auto_auto] sm:gap-16 lg:gap-20">
+        {{- with $f.note }}
+        <p class="max-w-[36ch] text-base leading-[1.45] [&_a]:underline [&_a]:decoration-foreground/30 [&_a]:underline-offset-4 [&_a:hover]:decoration-foreground">{{ . | markdownify }}</p>
+        {{- end }}
+        {{- with site.Menus.footer }}
+        <nav aria-label="{{ T "nav_footer" }}">
+          <ul class="flex flex-wrap gap-x-7 gap-y-3 sm:max-w-[320px] lg:max-w-none lg:justify-end">
+            {{- range . }}
+            <li><a href="{{ .URL }}" class="text-base leading-[1.25] font-medium underline-offset-4 hover:underline {{ $ui.focus }}">{{ .Name }}</a></li>
+            {{- end }}
+          </ul>
+        </nav>
+        {{- end }}
+      </div>
+    </div>
+
+    <div class="mt-12 flex flex-col gap-3 border-t border-border py-6 text-xs leading-[1.45] text-muted-foreground lg:flex-row lg:items-center lg:justify-between lg:gap-8">
+      <p>
+        <span class="text-foreground">{{ with $f.copyright }}{{ . }}{{ else }}© {{ now.Year }} {{ site.Title }}{{ end }}</span>
+        {{- if ne site.Params.show_credit false }}
+        <span class="ml-1">{{ T "credit_theme" }} <a href="https://www.themes.dev/?utm_source=hugo-themes&amp;utm_medium=referral&amp;utm_campaign=quire" class="underline underline-offset-4 hover:text-foreground {{ $ui.focus }}">{{ T "credit_by" }}</a></span>
+        {{- end }}
+      </p>
+      {{- with site.Menus.legal }}
+      <nav aria-label="{{ T "nav_legal" }}">
+        <ul class="flex flex-wrap gap-x-5 gap-y-2">
+          {{- range . }}
+          <li><a href="{{ .URL }}" class="underline underline-offset-4 hover:text-foreground {{ $ui.focus }}">{{ .Name }}</a></li>
+          {{- end }}
+        </ul>
+      </nav>
+      {{- end }}
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,4 @@
+{{- /* post/kicker.html: the small label over a post title: front matter `kicker`, else its first tag. */ -}}
+{{- $k := .Params.kicker }}
+{{- if not $k }}{{ with .GetTerms "tags" }}{{ $k = (index . 0).LinkTitle }}{{ end }}{{ end }}
+{{- return $k }}

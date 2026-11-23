@@ -1,0 +1,39 @@
+{{- /* cards/wide.html, ported from UI Pro story-card-hutwalk (its lead card): photo left, kicker, title, tags, summary,
+  author, date and reading time right; the whole card is the link (stretched), tags stay their own links. A page. */ -}}
+{{- $ui := partial "ui/classes.html" . }}
+{{- $a := partial "post/author.html" . }}
+<article class="group relative grid overflow-hidden rounded-2xl border border-border bg-card text-card-foreground transition-colors hover:border-foreground/25 has-[a:focus-visible]:ring-3 has-[a:focus-visible]:ring-ring/50 lg:grid-cols-[1.45fr_1fr]">
+  <div class="aspect-[16/10] overflow-hidden lg:aspect-auto lg:min-h-[440px]">
+    {{- with partial "post/cover.html" . }}
+    {{- partial "img.html" (dict "img" . "page" $ "ratio" "16:10" "sizes" "(min-width: 1200px) 660px, (min-width: 1024px) 56vw, 100vw" "eager" true "class" "h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-500 group-hover:scale-[1.03]") }}
+    {{- end }}
+  </div>
+  <div class="flex flex-col p-7 lg:p-10">
+    {{- with partial "post/kicker.html" . }}<p class="text-xs font-semibold tracking-[0.08em] text-muted-foreground uppercase">{{ . }}</p>{{ end }}
+    <h3 class="mt-3 text-2xl leading-[1.15] font-semibold tracking-[-0.01em] lg:text-3xl lg:leading-[1.08] lg:tracking-[-0.018em]">
+      <a href="{{ .RelPermalink }}" class="{{ $ui.stretched }}">{{ .Title }}</a>
+    </h3>
+    {{- partial "post/tags.html" (dict "page" . "class" "mt-4") }}
+    {{- with .Description | default .Summary }}
+    <p class="mt-5 max-w-[46ch] text-base leading-[1.5] text-muted-foreground">{{ . | plainify | truncate 260 }}</p>
+    {{- end }}
+    <div class="mt-auto flex items-end justify-between gap-4 pt-8">
+      <div class="flex items-center gap-3">
+        {{- with $a.photo }}
+        <span class="relative flex size-10 shrink-0 rounded-full after:absolute after:inset-0 after:rounded-full after:border after:border-border after:mix-blend-darken dark:after:mix-blend-lighten">
+          {{- partial "img.html" (dict "img" (dict "src" . "alt" "") "ratio" "1:1" "sizes" "40px" "class" "absolute inset-0 size-full rounded-full object-cover") -}}
+        </span>
+        {{- end }}
+        <div class="min-w-0 text-sm leading-[1.35]">
+          {{- with $a.name }}<p class="font-medium text-foreground">{{ . }}</p>{{ end }}
+          <p class="flex flex-wrap items-center gap-x-1.5 text-muted-foreground">
+            {{- partial "post/date.html" (dict "page" .) }}<span aria-hidden="true">·</span><span class="inline-flex items-center gap-1">{{ partial "icon.html" (dict "name" "clock" "class" "size-3.5") }}{{ T "reading_time" .ReadingTime }}</span>
+          </p>
+        </div>
+      </div>
+      <span class="grid size-10 shrink-0 place-items-center rounded-full border border-border motion-safe:transition-colors group-hover:bg-foreground group-hover:text-background" aria-hidden="true">
+        {{- partial "icon.html" (dict "name" "arrow-right" "class" "size-4") -}}
+      </span>
+    </div>
+  </div>
+</article>

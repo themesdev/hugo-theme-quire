@@ -1,0 +1,5 @@
+{{- /* Code blocks: Chroma with classes (coloured from the theme's tokens in prose.css) whatever the site's
+  markup.highlight says, inside div.highlight; ui.js ("code-copy") adds the copy button. */ -}}
+{{- $opts := merge (.Options | default dict) (dict "noClasses" false) }}
+{{- $r := transform.HighlightCodeBlock . $opts }}
+{{- $r.Wrapped -}}

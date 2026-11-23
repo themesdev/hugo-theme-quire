@@ -1,0 +1,49 @@
+{{- /* newsletter-photo.html, ported from UI Pro newsletter-kosmo: the sign-up under a post. A photo with two small figures
+  on it beside the kicker, title, lead and a form (email, consent, submit) that POSTs to params.newsletter.action; no JS.
+  The React original's "what you cook" select and its loading/success/error states are left out (a static site posts
+  to the mailing service, which answers itself). Hidden when params.newsletter.action is empty. */ -}}
+{{- $ui := partial "ui/classes.html" . }}
+{{- $n := site.Params.newsletter | default dict }}
+{{- if $n.action }}
+<section aria-labelledby="newsletter-post-title" class="bg-background py-16 lg:py-24">
+  <div class="mx-auto max-w-[1200px] px-6 lg:px-10">
+    <div class="grid overflow-hidden rounded-3xl border border-border bg-muted/40 lg:min-h-[520px] lg:grid-cols-2">
+      {{- with $n.photo }}
+      <div class="relative h-72 lg:h-auto">
+        {{- partial "img.html" (dict "img" . "sizes" "(min-width: 1024px) 560px, 100vw" "class" "absolute inset-0 size-full object-cover") }}
+        {{- with $n.stats }}
+        <ul class="absolute right-4 bottom-4 left-4 flex gap-3">
+          {{- range . }}
+          <li class="rounded-xl bg-background px-4 py-3 shadow-sm">
+            <span class="block text-2xl leading-[0.9] font-semibold tracking-[-0.035em]">{{ .value }}</span>
+            <span class="mt-1 block text-xs text-muted-foreground">{{ .label }}</span>
+          </li>
+          {{- end }}
+        </ul>
+        {{- end }}
+      </div>
+      {{- end }}
+      <div class="flex flex-col justify-center px-6 py-10 sm:px-10 lg:px-12 lg:py-12">
+        <p class="{{ $ui.kicker }}">{{ $n.name | default (T "newsletter") }}</p>
+        <h2 id="newsletter-post-title" class="mt-3 text-3xl leading-[1.08] font-semibold tracking-[-0.018em] text-balance lg:text-4xl">{{ $n.title | default (T "newsletter") }}</h2>
+        {{- with $n.body }}<p class="mt-4 text-base leading-[1.5] text-muted-foreground">{{ . }}</p>{{ end }}
+        <form action="{{ $n.action }}" method="{{ $n.method | default "post" }}" class="mt-7 grid gap-4">
+          <div class="grid gap-2">
+            <label for="newsletter-post-email" class="{{ $ui.label }}">{{ T "email" }} <span aria-hidden="true">*</span></label>
+            <input id="newsletter-post-email" name="email" type="email" required autocomplete="email" placeholder="{{ T "email_placeholder" }}" class="{{ $ui.field }}">
+          </div>
+          {{- if or $n.legal $n.privacy }}
+          <div class="flex items-start gap-3">
+            <input id="newsletter-post-consent" name="consent" type="checkbox" required class="mt-0.5 size-4 shrink-0 accent-primary">
+            <label for="newsletter-post-consent" class="text-sm leading-[1.4] font-normal">
+              {{ $n.legal }}{{ with $n.privacy }} <a href="{{ .href | relLangURL }}" class="underline underline-offset-4 {{ $ui.focus }}">{{ .label }}</a>{{ end }}
+            </label>
+          </div>
+          {{- end }}
+          <button type="submit" class="{{ $ui.btn }} h-9 w-full rounded-lg text-sm">{{ $n.submit | default (T "subscribe") }}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{{- end }}

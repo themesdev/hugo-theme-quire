@@ -1,0 +1,23 @@
+# Quire's defaults. Hugo merges these under your site's own hugo.toml, so set any of them there to change them.
+
+[params]
+  description = ""
+  # Prebuilt CSS (assets/css/compiled.css) unless true: then Hugo compiles assets/css/main.css with Tailwind v4.
+  tailwind = false
+  # "Theme: Quire by themes.dev" in the footer.
+  show_credit = true
+  # Table of contents on posts with at least this many second-level headings (set toc: false on a post to hide it).
+  toc_min_headings = 3
+  # Dates as Hugo's time.Format layouts (":date_long" is "23 November 2026" in English).
+  date_format = ":date_long"
+  # The section whose pages are posts (home, search, related posts).
+  mainSections = ["posts"]
+
+# Hugo takes only [params] (and menus, languages, output formats) from a theme. The site settings Quire needs (the
+# search index output, taxonomies, related posts, code highlighting with classes) go in your site's hugo.toml: see
+# the README, "Site config", or copy them from exampleSite/hugo.toml.
+
+# The Hugo versions Quire supports (themes.gohugo.io reads this). Extended is not needed: no Sass.
+[module.hugoVersion]
+  extended = false
+  min = "0.156.0"

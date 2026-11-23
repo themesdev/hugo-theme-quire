@@ -1,0 +1,12 @@
+{{- /* Markdown images: a figure with a responsive webp srcset (img.html) when the file is in the page bundle or in
+  assets/images/, and the title as its caption: ![A train on a viaduct](viaduct.jpg "The line above Finse"). */ -}}
+{{- $img := dict "src" .Destination "alt" (.PlainText | default "") }}
+{{- $tag := partial "img.html" (dict "img" $img "page" .Page "sizes" "(min-width: 800px) 690px, 100vw") }}
+{{- if .IsBlock -}}
+<figure>
+  {{ $tag }}
+  {{- with .Title }}<figcaption>{{ . | $.Page.RenderString }}</figcaption>{{ end }}
+</figure>
+{{- else -}}
+{{ $tag }}
+{{- end -}}

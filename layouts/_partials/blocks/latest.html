@@ -1,0 +1,48 @@
+{{- /* latest.html, ported from UI Pro story-card-hutwalk: a heading row (kicker, title, lead, "all posts"), the featured
+  post as a wide card, three more as small cards under a label, and every tag as a chip. No state.
+  (dict "lead" $page "pages" $three "kicker" "title" "body" "all" (dict "label" "href") "more_label" "…" "tags" true) */ -}}
+{{- $ui := partial "ui/classes.html" . }}
+<section aria-labelledby="latest-title" class="bg-background py-24 text-foreground lg:py-32">
+  <div class="mx-auto max-w-[1200px] px-6 lg:px-10">
+    <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+      <div class="max-w-[880px]">
+        {{- with .kicker }}<p class="text-xs font-semibold tracking-[0.08em] text-muted-foreground uppercase">{{ . }}</p>{{ end }}
+        <h2 id="latest-title" class="mt-4 text-4xl leading-[1.08] font-semibold tracking-[-0.018em] lg:text-5xl lg:leading-[1.04] lg:tracking-[-0.024em]">{{ .title }}</h2>
+        {{- with .body }}<p class="mt-5 max-w-[56ch] text-lg leading-[1.5] text-muted-foreground">{{ . }}</p>{{ end }}
+      </div>
+      {{- with .all }}
+      <a href="{{ .href }}" class="inline-flex h-auto shrink-0 items-center gap-2 text-sm font-medium text-foreground underline-offset-4 hover:underline {{ $ui.focus }}">
+        {{- .label }}{{ partial "icon.html" (dict "name" "arrow-right" "class" "size-4") -}}
+      </a>
+      {{- end }}
+    </div>
+
+    {{- with .lead }}
+    <div class="mt-12">{{ partial "cards/wide.html" . }}</div>
+    {{- end }}
+
+    {{- with .pages }}
+    <div class="mt-12">
+      {{- with $.more_label }}<p class="text-lg leading-[1.25] font-semibold text-foreground">{{ . }}</p>{{ end }}
+      <ul class="{{ if $.more_label }}mt-5 {{ end }}grid gap-6 md:grid-cols-3">
+        {{- range . }}<li>{{ partial "cards/small.html" . }}</li>{{ end }}
+      </ul>
+    </div>
+    {{- end }}
+
+    {{- if .tags }}{{ with site.Taxonomies.tags.ByCount }}
+    <nav aria-labelledby="latest-topics" class="mt-12">
+      <p id="latest-topics" class="text-lg leading-[1.25] font-semibold text-foreground">{{ T "browse_topics" }}</p>
+      <ul class="mt-5 flex flex-wrap gap-2.5">
+        {{- range . }}
+        <li>
+          <a href="{{ .Page.RelPermalink }}" class="{{ $ui.btnOutline }} h-9 gap-2 rounded-full px-4 text-sm">
+            {{- .Page.LinkTitle }}<span class="text-xs text-muted-foreground tabular-nums">{{ .Count }}</span>
+          </a>
+        </li>
+        {{- end }}
+      </ul>
+    </nav>
+    {{- end }}{{ end }}
+  </div>
+</section>

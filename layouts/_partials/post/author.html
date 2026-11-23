@@ -1,0 +1,5 @@
+{{- /* post/author.html: the author of a page as a map {name, role, bio, note, photo, href, links}. Front matter
+  `author: <key>` picks data/authors/<key>.yaml; without it, site params.author. */ -}}
+{{- $a := site.Params.author | default dict }}
+{{- with .Params.author }}{{ with index hugo.Data.authors . }}{{ $a = . }}{{ end }}{{ end }}
+{{- return $a }}

@@ -1,0 +1,10 @@
+{
+  "name": "hugo-theme-quire",
+  "private": true,
+  "description": "Only needed with params.tailwind = true: Hugo compiles assets/css/main.css with Tailwind v4.",
+  "license": "MIT",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.5",
+    "tailwindcss": "^4.3.5"
+  }
+}

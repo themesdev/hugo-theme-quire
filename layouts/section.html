@@ -1,0 +1,12 @@
+{{- define "main" }}
+{{- $pages := .Pages.ByDate.Reverse }}
+{{- if eq .Section (index (site.Params.mainSections | default (slice "posts")) 0) }}{{ $pages = (partial "post/list.html" .) }}{{ end }}
+{{- $pager := .Paginate $pages }}
+{{- partial "blocks/page-header.html" (dict
+  "title" .Title
+  "lead" (.Description | default (.Content | plainify))
+  "kicker" (cond (gt $pager.PageNumber 1) (T "page_of" (dict "N" $pager.PageNumber "Total" $pager.TotalPages)) "")
+  "search" true) }}
+{{- partial "blocks/stories.html" (dict "pages" $pager.Pages "title" .Title "title_hidden" true) }}
+{{- partial "post/pagination.html" $pager }}
+{{- end }}

@@ -1,0 +1,3 @@
+{{- /* post/list.html: the site's posts, newest first (pages in params.mainSections, drafts and future posts excluded by
+  Hugo). */ -}}
+{{- return (where site.RegularPages "Section" "in" (site.Params.mainSections | default (slice "posts"))).ByDate.Reverse }}

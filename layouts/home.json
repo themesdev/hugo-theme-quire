@@ -1,0 +1,13 @@
+{{- /* The search index (outputs.home includes "json"): every post with its title, link, summary, date and tags. */ -}}
+{{- $out := slice }}
+{{- range partial "post/list.html" . }}
+  {{- $tags := slice }}{{ range .GetTerms "tags" }}{{ $tags = $tags | append .LinkTitle }}{{ end }}
+  {{- $out = $out | append (dict
+    "title" .Title
+    "url" .RelPermalink
+    "summary" (.Description | default (.Summary | plainify) | truncate 220)
+    "date" (.Date | time.Format (site.Params.date_format_short | default ":date_medium"))
+    "tags" $tags
+    "text" (.Plain | truncate 4000)) }}
+{{- end }}
+{{- $out | jsonify }}

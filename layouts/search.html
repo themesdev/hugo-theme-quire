@@ -1,0 +1,33 @@
+{{- define "main" }}
+{{- /* The search page (front matter layout: search): page-header's field, then results that ui.js ("search") fills from
+  the home page's JSON index (outputs.home includes "json"). Without JS the form still lands here and says so. */ -}}
+{{- $ui := partial "ui/classes.html" . }}
+{{- $index := "" }}{{ with site.Home.OutputFormats.Get "json" }}{{ $index = .RelPermalink }}{{ end }}
+<div data-ui="search" data-index="{{ $index }}" data-none="{{ T "search_none" }}" data-count-one="{{ T "search_count_one" }}" data-count-other="{{ T "search_count_other" }}" data-read-label="{{ T "read_more" }}">
+  <section aria-labelledby="search-title" class="bg-muted/40 py-14 lg:py-20">
+    <div class="mx-auto max-w-[720px] px-6 text-center lg:px-10">
+      <h1 id="search-title" class="text-5xl leading-[1.04] font-semibold tracking-[-0.024em] text-balance lg:text-6xl lg:leading-none lg:tracking-[-0.03em]">{{ .Title }}</h1>
+      {{- with .Description }}<p class="mx-auto mt-5 max-w-[48ch] text-lg leading-[1.5] text-muted-foreground">{{ . }}</p>{{ end }}
+      <form role="search" action="{{ .RelPermalink }}" method="get" class="relative mx-auto mt-8 max-w-[560px]">
+        <label for="search-q" class="sr-only">{{ T "search_label" }}</label>
+        <input id="search-q" name="q" type="search" autocomplete="off" placeholder="{{ T "search_placeholder" }}" class="{{ $ui.field }} pr-10" data-search-input>
+        <button type="submit" aria-label="{{ T "search" }}" class="{{ $ui.btn }} absolute top-1 right-1 size-7 rounded-md">{{ partial "icon.html" (dict "name" "search" "class" "size-4") }}</button>
+      </form>
+    </div>
+  </section>
+  <section aria-labelledby="search-results-title" class="mx-auto max-w-[800px] px-6 py-14 lg:py-20">
+    <h2 id="search-results-title" class="sr-only">{{ T "search_results" }}</h2>
+    <p data-search-status role="status" class="text-sm text-muted-foreground">{{ T "search_hint" }}</p>
+    <ol data-search-results class="mt-6 grid gap-4"></ol>
+    <template data-search-item>
+      <li>
+        <article class="group relative rounded-2xl border border-border bg-card p-6 transition-colors hover:border-foreground/25 has-[a:focus-visible]:ring-3 has-[a:focus-visible]:ring-ring/50">
+          <p data-f="meta" class="text-xs text-muted-foreground"></p>
+          <h3 class="mt-2 text-xl leading-[1.25] font-semibold"><a data-f="title" class="{{ $ui.stretched }} after:rounded-2xl"></a></h3>
+          <p data-f="summary" class="mt-2 text-sm leading-[1.5] text-muted-foreground"></p>
+        </article>
+      </li>
+    </template>
+  </section>
+</div>
+{{- end }}

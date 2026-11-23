@@ -1,0 +1,72 @@
+{{- /* newsletter.html, ported from UI Pro newsletter-northsound: the sign-up on the home page. Kicker, title and lead, an
+  email and first-name form (a plain POST to params.newsletter.action, no JS), the privacy line, then the benefits and a
+  card of the latest issue. Hidden when params.newsletter.action is empty. */ -}}
+{{- $ui := partial "ui/classes.html" . }}
+{{- $n := site.Params.newsletter | default dict }}
+{{- if $n.action }}
+<section aria-labelledby="newsletter-title" class="bg-background py-20">
+  <div class="mx-auto grid max-w-[1200px] gap-16 px-6 lg:grid-cols-2 lg:items-center lg:gap-20 lg:px-10">
+    <div>
+      {{- with $n.kicker }}<p class="{{ $ui.kicker }}">{{ . }}</p>{{ end }}
+      <h2 id="newsletter-title" class="mt-4 text-4xl leading-[1.08] font-semibold tracking-[-0.018em] text-balance lg:text-5xl lg:leading-[1.04] lg:tracking-[-0.024em]">{{ $n.title | default (T "newsletter") }}</h2>
+      {{- with $n.body }}<p class="mt-5 max-w-[50ch] text-lg leading-[1.5] text-muted-foreground">{{ . }}</p>{{ end }}
+      <form class="mt-10 grid gap-5" action="{{ $n.action }}" method="{{ $n.method | default "post" }}">
+        <div class="grid gap-5 sm:grid-cols-[3fr_2fr]">
+          <div class="grid gap-2">
+            <label class="{{ $ui.label }}" for="newsletter-email">{{ T "email" }}</label>
+            <input id="newsletter-email" type="email" name="email" required autocomplete="email" placeholder="{{ T "email_placeholder" }}" class="{{ $ui.field }}">
+          </div>
+          <div class="grid gap-2">
+            <label class="{{ $ui.label }}" for="newsletter-first">{{ T "first_name" }}</label>
+            <input id="newsletter-first" name="first_name" autocomplete="given-name" class="{{ $ui.field }}">
+          </div>
+        </div>
+        {{- if or $n.legal $n.privacy }}
+        <p class="max-w-[60ch] text-xs leading-[1.5] text-muted-foreground">
+          {{ $n.legal }}
+          {{- with $n.privacy }} <a href="{{ .href | relLangURL }}" class="font-medium text-foreground underline underline-offset-4 {{ $ui.focus }}">{{ .label }}</a>{{ end }}
+        </p>
+        {{- end }}
+        <div class="mt-1 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <button type="submit" class="{{ $ui.btn }} h-9 rounded-full px-5 text-sm">
+            {{- $n.submit | default (T "subscribe") }}{{ partial "icon.html" (dict "name" "arrow-right" "class" "size-4") -}}
+          </button>
+          {{- with $n.readers }}<p class="text-sm text-muted-foreground">{{ . }}</p>{{ end }}
+        </div>
+      </form>
+    </div>
+    <div class="flex flex-col gap-9">
+      {{- with $n.benefits }}
+      <ul class="grid gap-4">
+        {{- range . }}
+        <li class="flex items-start gap-3.5 text-lg leading-[1.25] font-semibold">
+          <span class="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground">{{ partial "icon.html" (dict "name" "check" "class" "size-3.5") }}</span>{{ . }}
+        </li>
+        {{- end }}
+      </ul>
+      {{- end }}
+      {{- with $n.issue }}
+      <div class="relative pt-6">
+        <div class="absolute inset-x-10 top-0 h-12 rounded-t-3xl border border-border bg-muted" aria-hidden="true"></div>
+        <div class="absolute inset-x-5 top-3 h-12 rounded-t-3xl border border-border bg-muted/60" aria-hidden="true"></div>
+        <article aria-labelledby="newsletter-issue" class="relative overflow-hidden rounded-3xl border border-border bg-card shadow-xl shadow-foreground/5">
+          {{- with .photo }}{{ partial "img.html" (dict "img" . "ratio" "21:9" "sizes" "(min-width: 1200px) 540px, 100vw" "class" "aspect-[21/9] w-full object-cover") }}{{ end }}
+          <div class="p-7 lg:p-8">
+            <p class="flex items-center justify-between gap-4 {{ $ui.kicker }}"><span>{{ .number }}</span><span>{{ .date }}</span></p>
+            <h3 id="newsletter-issue" class="mt-3 text-2xl leading-[1.15] font-semibold tracking-[-0.01em]">{{ .title }}</h3>
+            {{- with .contents }}
+            <ul class="mt-5 grid list-disc gap-2.5 pl-5 marker:text-foreground">
+              {{- range . }}<li class="text-base leading-[1.5] text-muted-foreground">{{ . }}</li>{{ end }}
+            </ul>
+            {{- end }}
+            {{- with .link }}
+            <a href="{{ .href | relLangURL }}" class="mt-6 inline-flex items-center gap-1.5 text-sm font-medium underline-offset-4 hover:underline {{ $ui.focus }}">{{ .label }}{{ partial "icon.html" (dict "name" "arrow-right" "class" "size-4") }}</a>
+            {{- end }}
+          </div>
+        </article>
+      </div>
+      {{- end }}
+    </div>
+  </div>
+</section>
+{{- end }}

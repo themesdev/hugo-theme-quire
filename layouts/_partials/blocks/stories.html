@@ -1,0 +1,40 @@
+{{- /* stories.html, ported from UI Pro story-card-nordkyst: a heading row (kicker, title, lead, an "all posts" link) over a
+  three-column masonry of story cards, the middle column set lower. Photo shapes repeat the original's rhythm. No state.
+  (dict "pages" $pages "kicker" "…" "title" "…" "body" "…" "all" (dict "label" "href") "title_hidden" true) */ -}}
+{{- $ui := partial "ui/classes.html" . }}
+{{- $pages := .pages | default slice }}
+{{- $id := printf "stories-%s" (substr (md5 (.title | default "stories")) 0 6) }}
+{{- $ratios := slice "4:5" "2:1" "1:1" "2:1" "4:5" "1:1" }}
+{{- if $pages }}
+<section aria-labelledby="{{ $id }}" class="bg-background {{ if .title_hidden }}py-14 lg:py-20{{ else }}py-24 lg:py-32{{ end }}">
+  <div class="mx-auto max-w-[1280px] px-6 lg:px-10">
+    {{- if .title_hidden }}
+    <h2 id="{{ $id }}" class="sr-only">{{ .title }}</h2>
+    {{- else }}
+    <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+      <div class="max-w-[780px]">
+        {{- with .kicker }}<p class="{{ $ui.kicker }}">{{ . }}</p>{{ end }}
+        <h2 id="{{ $id }}" class="mt-4 text-4xl leading-[1.08] font-semibold tracking-[-0.018em] text-balance lg:text-5xl lg:leading-[1.04] lg:tracking-[-0.024em]">{{ .title }}</h2>
+        {{- with .body }}<p class="mt-5 max-w-[56ch] text-lg leading-[1.5] text-muted-foreground">{{ . }}</p>{{ end }}
+      </div>
+      {{- with .all }}
+      <a href="{{ .href }}" class="{{ $ui.btnOutline }} h-9 self-start rounded-lg px-4 text-sm lg:self-auto">
+        {{- .label }}{{ partial "icon.html" (dict "name" "arrow-right" "class" "size-4") -}}
+      </a>
+      {{- end }}
+    </div>
+    {{- end }}
+    <div class="{{ if not .title_hidden }}mt-14 lg:mt-16 {{ end }}grid items-start gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {{- range $n := slice 0 1 2 }}
+      <ul class="flex flex-col gap-6{{ if eq $n 1 }} lg:mt-10{{ end }}{{ if eq $n 2 }} md:max-lg:col-span-2 md:max-lg:grid md:max-lg:grid-cols-2{{ end }}">
+        {{- range $i, $p := $pages }}
+        {{- if eq (mod $i 3) $n }}
+        <li>{{ partial "cards/story.html" (dict "page" $p "ratio" (index $ratios (mod $i 6))) }}</li>
+        {{- end }}
+        {{- end }}
+      </ul>
+      {{- end }}
+    </div>
+  </div>
+</section>
+{{- end }}
